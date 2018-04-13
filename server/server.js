@@ -3,7 +3,7 @@ const bodyParser = require("body-parser")
 const path = require("path");
 const socketIO = require("socket.io");
 const http = require("http");
-
+const {generateMessage} = require("./utils/message");
 const port = process.env.PORT || 3000 ;
 const publicPath = path.join(__dirname, "../public");
 var app = express();
@@ -14,12 +14,7 @@ app.use(express.static(publicPath));
 
 io.on("connection", (socket) => {
     console.log("New user connection");
-    socket.emit("newEmail", {
-        from : "sathish.nagappa@gmail.com",
-        text : "Hi, How are you?",
-        createdAt : 1231231
-    });
-
+    socket.emit("newEmail", generateMessage("sathish.nagappa@gmail.com",  "Hi, How are you?"));
     // socket.emit("newMessage", {
     //     from : "sathish.nagappa@gmail.com",
     //     text : "Whatsuppp??",
@@ -30,24 +25,12 @@ io.on("connection", (socket) => {
        console.log("create Email", newEmail);
     });
 
-    socket.emit("newMessage", {
-        from : "Admin",
-        text : "Welcome to Chat App",
-        createdAt : new Date().getTime()
-    });
+    socket.emit("newMessage", generateMessage("Admin", "Welcome to Chat App"));
 
-    socket.broadcast.emit("newMessage", {
-        from : "Admin",
-        text : "New user joined",
-        createdAt : new Date().getTime()
-});
+    socket.broadcast.emit("newMessage", generateMessage("Admin", "New user joined"));
     socket.on("createMessage", (newMessage) => {
         console.log("create Message", newMessage);        
-        // io.emit("newMessage", {
-        //     from : newMessage.from,
-        //     text : newMessage.text,
-        //     createdAt : new Date().getTime()
-        // });
+        io.emit("newMessage", generateMessage(newMessage.from,newMessage.text));
      });
     socket.on("disconnect", () => {
         console.log("User was Disconnected");
