@@ -29,13 +29,25 @@ io.on("connection", (socket) => {
     socket.on("createEmail", (newEmail) => {
        console.log("create Email", newEmail);
     });
+
+    socket.emit("newMessage", {
+        from : "Admin",
+        text : "Welcome to Chat App",
+        createdAt : new Date().getTime()
+    });
+
+    socket.broadcast.emit("newMessage", {
+        from : "Admin",
+        text : "New user joined",
+        createdAt : new Date().getTime()
+});
     socket.on("createMessage", (newMessage) => {
-        console.log("create Message", newMessage);
-        io.emit("newMessage", {
-            from : newMessage.from,
-            text : newMessage.text,
-            createdAt : new Date().getTime()
-        });
+        console.log("create Message", newMessage);        
+        // io.emit("newMessage", {
+        //     from : newMessage.from,
+        //     text : newMessage.text,
+        //     createdAt : new Date().getTime()
+        // });
      });
     socket.on("disconnect", () => {
         console.log("User was Disconnected");
