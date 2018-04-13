@@ -5,11 +5,11 @@ var socket = io();
         to: "sathish@brillio.com",
         text: "Hope you are doing great!"
       });
-      socket.emit("createMessage", {
-        from: "sathish@brillio.com",
-        text: "Hi, How are you?"
-      });
-     });
+    //   socket.emit("createMessage", {
+    //     from: "sathish@brillio.com",
+    //     text: "Hi, How are you?"
+    //   });
+    });
      socket.on("disconnect", function() {
       console.log("Disconnected from server");
      });

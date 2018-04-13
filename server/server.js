@@ -20,17 +20,22 @@ io.on("connection", (socket) => {
         createdAt : 1231231
     });
 
-    socket.emit("newMessage", {
-        from : "sathish.nagappa@gmail.com",
-        text : "Whatsuppp??",
-        createdAt : 1231231
-    });
+    // socket.emit("newMessage", {
+    //     from : "sathish.nagappa@gmail.com",
+    //     text : "Whatsuppp??",
+    //     createdAt : 1231231
+    // });
 
     socket.on("createEmail", (newEmail) => {
        console.log("create Email", newEmail);
     });
     socket.on("createMessage", (newMessage) => {
         console.log("create Message", newMessage);
+        io.emit("newMessage", {
+            from : newMessage.from,
+            text : newMessage.text,
+            createdAt : new Date().getTime()
+        });
      });
     socket.on("disconnect", () => {
         console.log("User was Disconnected");
