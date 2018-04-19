@@ -1,6 +1,22 @@
 // var moment = require("moment");
 var socket = io();
 
+   function scrollToBottom() {
+   var messages = jQuery("#messages");
+   var newMessage =messages.children("li:last-child");
+
+   var clientHeight = messages.prop("clientHeight");
+   var scrollTop = messages.prop("scrollTop");
+   var scrollHeight = messages.prop("scrollHeight");
+   var newMessageHeight = newMessage.innerHeight();
+   var lastMessageHeight = newMessage.prev().innerHeight();
+    // console.log(clientHeight + " " + scrollTop + " " + scrollHeight + " " + newMessageHeight + " " + lastMessageHeight);
+   if(clientHeight + scrollTop + newMessageHeight + lastMessageHeight >= scrollHeight) {
+       messages.scrollTop(scrollHeight);
+    // console.log("Should Scroll");
+   }
+   }
+
      socket.on("connect", function() {
       console.log("Connected to server");
       socket.emit("createEmail", {
@@ -20,23 +36,31 @@ var socket = io();
        });
 
        socket.on("newMessage", function(message) {
-       var formatedTime = moment(message.createdAt).format("h:mm a");    
-        console.log("Got new message!", message);
-        var li = jQuery("<li></li>");
-        li.text(`${message.from} ${formatedTime} : ${message.text}`);
-        jQuery("#messages").append(li);
+        var formatedTime = moment(message.createdAt).format("h:mm a");   
+        var template = jQuery("#message-template").html();
+        var html = Mustache.render(template, {
+            text : message.text,
+            from : message.from,
+            createdAt : formatedTime
+        });
+        
+        jQuery("#messages").append(html);
+        scrollToBottom();
        });
 
        socket.on("newLocationMessage", function(message) {
         var formatedTime = moment(message.createdAt).format("h:mm a"); 
         console.log("Got new message!", message);
-        var li = jQuery("<li></li>");
-        var a = jQuery("<a target=\"_blank\">My current location</a>");
 
-        li.text(`${message.from} ${formatedTime}: `);
-        a.attr("href",message.url);
-        li.append(a);
-        jQuery("#messages").append(li);
+        var template = jQuery("#location-message-template").html();
+        var html = Mustache.render(template, {
+            url : message.url,
+            from : message.from,
+            createdAt : formatedTime
+        });
+
+        jQuery("#messages").append(html);
+        scrollToBottom();
        });
 
 
